@@ -1,6 +1,11 @@
 import React from "react";
-import { ShieldCheck, Trophy, CheckCircle } from "lucide-react";
+import { ShieldCheck, Trophy, CheckCircle, Infinity, ShieldHalf, Crown, Calendar } from "lucide-react";
 import { AiFillThunderbolt } from "react-icons/ai";
+import image1 from '../../assets/image1.png'
+import image2 from '../../assets/image2.png'
+import image3 from '../../assets/image3.png'
+import { BiDollar } from "react-icons/bi";
+
 
 export default function FeaturesSection() {
   return (
@@ -74,7 +79,7 @@ export default function FeaturesSection() {
           {/* Left Image */}
           <div className="bg-gray-900 rounded-xl shadow-lg overflow-hidden">
             <img
-              src="/images/trading-dashboard.png"
+              src={image2}
               alt="Trading Dashboard"
               className="w-full"
             />
@@ -95,10 +100,15 @@ export default function FeaturesSection() {
               mistakes, learn from them, and develop winning strategies before
               risking real capital.
             </p>
-            <div className="bg-green-50 rounded-lg p-4 mb-4 flex justify-between items-center">
-              <span className="text-green-600 font-bold text-xl">$100K</span>
-              <span className="text-gray-700">Starting Balance</span>
-              <span className="text-gray-500">∞ Practice Trades</span>
+            <div className="bg-green-50 rounded-lg p-4 mb-4 flex justify-around items-center">
+              <div className="flex flex-col">
+                <span className="text-green-600 font-bold text-2xl inline-flex items-center"><BiDollar />100K</span>
+                <span className="text-gray-700">Starting Balance</span>
+              </div>
+              <div className="text-gray-500 flex flex-col items-center justify-center">
+                <span className="text-green-500"><Infinity size={30} strokeWidth={3} /> </span>
+                <span> Practice Trades </span>
+              </div>
             </div>
             <ul className="space-y-2 text-gray-700">
               <li className="flex items-center gap-2">
@@ -135,13 +145,17 @@ export default function FeaturesSection() {
               gamified environment.
             </p>
             <div className="flex gap-4">
-              <span className="bg-yellow-50 text-yellow-600 px-4 py-2 rounded-lg text-sm font-medium">
+              <span className="bg-yellow-50 flex items-center gap-y-4 flex-col text-yellow-600 px-4 py-2 rounded-lg text-sm font-medium">
+                <ShieldHalf />
+
                 Daily Rankings
               </span>
-              <span className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium">
+              <span className="bg-indigo-50 flex items-center gap-y-4 flex-col text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium">
+                <Calendar />
                 Weekly Contests
               </span>
-              <span className="bg-pink-50 text-pink-600 px-4 py-2 rounded-lg text-sm font-medium">
+              <span className="bg-pink-50 flex items-center gap-y-4 flex-col text-pink-600 px-4 py-2 rounded-lg text-sm font-medium">
+                <Crown />
                 Monthly Champions
               </span>
             </div>
@@ -150,13 +164,13 @@ export default function FeaturesSection() {
           {/* Right Image */}
           <div className="bg-gray-900 rounded-xl shadow-lg overflow-hidden">
             <img
-              src="/images/leaderboard.png"
+              src={image3}
               alt="Leaderboard"
               className="w-full"
             />
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 }
