@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { doCreateUserWithEmailAndPassword } from "../firebase/auth.js";
+import toast from "react-hot-toast/headless";
+import axios from "axios";
 
 export default function SignupPage() {
   const [fullName, setFullName] = useState("");
@@ -40,8 +42,8 @@ export default function SignupPage() {
       const firebaseUser = userCredential.user;
 
       const response = await axios.post(`${apiUrl}/auth/register`, {
-        uuid: firebaseUser.uid,
-        email: firebase.email,
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
         fullName,
         username: username.toLowerCase(),
 
