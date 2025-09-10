@@ -9,6 +9,7 @@ function App() {
     <Router>
       <Layout>
         <AppRoutes />
+        <Toaster position="top-center" reverseOrder={false} />
       </Layout>
     </Router>
   );

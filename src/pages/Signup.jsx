@@ -1,9 +1,72 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { doCreateUserWithEmailAndPassword } from "../firebase/auth.js";
 
 export default function SignupPage() {
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const avalibility = await axios.get(`${apiUrl}/auth/check-username`, {
+        params: { username: username.toLowerCase() }
+      })
+
+      if (!avalibility.data.available) {
+        setError("Username already taken");
+        setLoading(false);
+        return
+
+      }
+      //create user crediential in firebase
+      const userCredential = await doCreateUserWithEmailAndPassword(email, password);
+      const firebaseUser = userCredential.user;
+
+      const response = await axios.post(`${apiUrl}/auth/register`, {
+        uuid: firebaseUser.uid,
+        email: firebase.email,
+        fullName,
+        username: username.toLowerCase(),
+
+      })
+
+      if (response.status === 201) {
+        toast.success("User created successfully")
+      }
+
+
+
+      // ✅ user created
+
+      // You could update profile here:
+      // await updateProfile(user, { displayName: fullName });
+
+      console.log("User created:", user);
+    } catch (err) {
+      toast.error("Error creating user");
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
@@ -18,15 +81,18 @@ export default function SignupPage() {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
             </label>
             <input
               type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               placeholder="Enter your full name"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              required
             />
           </div>
 
@@ -36,6 +102,8 @@ export default function SignupPage() {
             </label>
             <input
               type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Choose a unique username"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             />
@@ -47,8 +115,11 @@ export default function SignupPage() {
             </label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email address"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              required
             />
           </div>
 
@@ -58,12 +129,12 @@ export default function SignupPage() {
             </label>
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Create a strong password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              required
             />
-            <p className="text-xs text-gray-400 mt-1">
-              Password must be at least 8 characters
-            </p>
           </div>
 
           <div>
@@ -72,36 +143,22 @@ export default function SignupPage() {
             </label>
             <input
               type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm your password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              required
             />
           </div>
 
-          {/* Terms */}
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="terms"
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-            />
-            <label htmlFor="terms" className="text-sm text-gray-600">
-              I agree to the{" "}
-              <a href="#" className="text-blue-600 hover:underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" className="text-blue-600 hover:underline">
-                Privacy Policy
-              </a>
-            </label>
-          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition disabled:opacity-50"
           >
-            Sign Up
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
@@ -114,10 +171,16 @@ export default function SignupPage() {
 
         {/* Social Login */}
         <div className="flex space-x-4">
-          <button className="flex items-center justify-center w-1/2 border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+          <button
+            type="button"
+            className="flex items-center justify-center w-1/2 border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+          >
             <FcGoogle className="mr-2 text-lg" /> Google
           </button>
-          <button className="flex items-center justify-center w-1/2 border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+          <button
+            type="button"
+            className="flex items-center justify-center w-1/2 border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+          >
             <FaGithub className="mr-2 text-lg" /> GitHub
           </button>
         </div>
