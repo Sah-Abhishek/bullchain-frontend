@@ -2,7 +2,7 @@
 // src/components/Layout.jsx
 import React from "react";
 import { useLocation } from "react-router-dom";
-import Navbar from "../pages/LandingPage.jsx";
+import Navbar from "../components/LandingPage/Navbar.jsx";
 // import Footer from "./Footer";
 
 export default function Layout({ children }) {

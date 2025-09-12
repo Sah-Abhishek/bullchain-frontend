@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import { doCreateUserWithEmailAndPassword } from "../firebase/auth.js";
-import toast from "react-hot-toast/headless";
+import { doCreateUserWithEmailAndPassword, doSigninWithGoogle } from "../firebase/auth.js";
+import { toast } from "react-hot-toast";
 import axios from "axios";
 
 export default function SignupPage() {
@@ -60,14 +60,55 @@ export default function SignupPage() {
       // You could update profile here:
       // await updateProfile(user, { displayName: fullName });
 
-      console.log("User created:", user);
+      console.log("User created:", firebaseUser);
     } catch (err) {
       toast.error("Error creating user");
-      setError(err.message);
+      setError(err.response?.data?.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleGoogleSignup = async () => {
+    try {
+      setLoading(true);
+      const result = await doSigninWithGoogle();
+      const firebaseUser = result.user;
+
+
+      const generatedUsername = firebaseUser.email.split("@")[0].toLowerCase();
+      const availability = await axios.get(`${apiUrl}/auth/check-username`,
+        {
+          params: { username: generatedUsername }
+        }
+      )
+
+
+      let finalUsername = generatedUsername;
+      if (!availability.data.availible) {
+        // falback if taken
+        finalUsername = generatedUsername + "_" + Math.floor(Math.random() * 1000);
+
+      }
+      // save to backend
+      const response = await axios.post(`${apiUrl}/auth/register`, {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        fullName: firebaseUser.displayName,
+        username: finalUsername
+      });
+
+      if (response.status === 201) {
+        toast.success("SignedUp successfully");
+      }
+
+    } catch (error) {
+      console.error(error)
+      setError(error.message);
+
+    }
+
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -174,17 +215,18 @@ export default function SignupPage() {
         {/* Social Login */}
         <div className="flex space-x-4">
           <button
+            onClick={handleGoogleSignup}
             type="button"
-            className="flex items-center justify-center w-1/2 border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+            className="flex items-center justify-center  border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
           >
             <FcGoogle className="mr-2 text-lg" /> Google
           </button>
-          <button
-            type="button"
-            className="flex items-center justify-center w-1/2 border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-          >
-            <FaGithub className="mr-2 text-lg" /> GitHub
-          </button>
+          {/* <button */}
+          {/*   type="button" */}
+          {/*   className="flex items-center justify-center w-1/2 border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition" */}
+          {/* > */}
+          {/*   <FaGithub className="mr-2 text-lg" /> GitHub */}
+          {/* </button> */}
         </div>
       </div>
     </div>
