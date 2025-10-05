@@ -213,11 +213,11 @@ export default function SignupPage() {
         </div>
 
         {/* Social Login */}
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 flex items-center justify-center">
           <button
             onClick={handleGoogleSignup}
             type="button"
-            className="flex items-center justify-center  border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+            className="flex items-center justify-center w-full  border border-gray-300 rounded-lg py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
           >
             <FcGoogle className="mr-2 text-lg" /> Google
           </button>

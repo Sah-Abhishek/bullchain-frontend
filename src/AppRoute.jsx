@@ -7,6 +7,7 @@ import LandingPage from "./pages/LandingPage.jsx";
 import Signup from "./pages/Signup.jsx"
 import MarketPage from "./pages/Market.jsx";
 import Login from "./pages/Login.jsx";
+import NewsPage from "./pages/News.jsx";
 // import Signup from "../pages/Signup";
 // import Login from "../pages/Login";
 // import Market from "../pages/Market";
@@ -31,6 +32,7 @@ const AppRoutes = ({ isLoggedIn }) => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/market" element={<MarketPage />} />
+        <Route path="/news" element={<NewsPage />} />
       </Routes>
     </>
   );

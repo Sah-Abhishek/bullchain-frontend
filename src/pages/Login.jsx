@@ -3,8 +3,10 @@ import { FcGoogle } from "react-icons/fc";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoEyeOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword, doSignInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
+import { doSignInWithEmailAndPassword, } from "../firebase/auth.js";
 import { toast } from "react-hot-toast";
+import { GoogleAuthProvider } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
